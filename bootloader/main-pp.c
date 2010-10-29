@@ -71,6 +71,11 @@ extern int show_logo(void);
 
 #elif CONFIG_KEYPAD == SANSA_C200_PAD
 #define BOOTLOADER_BOOT_OF      BUTTON_LEFT
+/* Define other buttons used to load Firmware -- id10terror */
+#define BOOTLOADER_BOOT_R0      BUTTON_SELECT
+#define BOOTLOADER_BOOT_R1      BUTTON_UP
+#define BOOTLOADER_BOOT_R2      BUTTON_RIGHT
+#define BOOTLOADER_BOOT_R3      BUTTON_DOWN
 
 #elif CONFIG_KEYPAD == MROBE100_PAD
 #define BOOTLOADER_BOOT_OF      BUTTON_POWER
@@ -743,5 +748,4 @@ else if(btn & BOOTLOADER_BOOT_R3)
 else
 	return (void*)loadbuffer;
 }
-
 
