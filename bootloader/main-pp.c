@@ -8,7 +8,11 @@
  * $Id$
  *
  * Copyright (C) 2006 by Barry Wardell
- *
+ ****************************************************************************
+ * Modified by: id10terror (id10terror.net) (C) 2010
+ * Rockbox Custom Bootloader with multi-boot
+ * Configurable via cbl.cfg configuration file
+ ****************************************************************************
  * Based on Rockbox iriver bootloader by Linus Nielsen Feltzing
  * and the ipodlinux bootloader by Daniel Palffy and Bernard Leach
  * 
@@ -38,6 +42,7 @@
 #include "disk.h"
 #include "crc32-mi4.h"
 #include <string.h>
+#include <errno.h>
 #include "power.h"
 #include "version.h"
 #if defined(SANSA_E200) || defined(PHILIPS_SA9200)
@@ -47,6 +52,25 @@
 #if defined(SANSA_E200) || defined(SANSA_C200) || defined(PHILIPS_SA9200)
 #include "usb.h"
 #include "usb_drv.h"
+#endif
+#if defined(SANSA_E200) || defined(SANSA_C200)
+#include <ctype.h>
+/***********************************************
+  Define dir and file variables -- id10terror
+************************************************/
+char cbl_cfg_file[]="/.rockbox/cbl.cfg";
+char cbl_fw_dir[128];
+char btn_select[48];
+char btn_up[48];
+char btn_right[48];
+char btn_down[48];
+
+/* User-Defined Descriptions for FW files -- id10terror */
+//char btn_select_desc[64];
+//char btn_up_desc[64];
+//char btn_right_desc[64];
+//char btn_down_desc[64];
+
 #endif
 #if defined(SAMSUNG_YH925)
 /* this function (in lcd-yh925.c) resets the screen orientation for the OF
@@ -309,7 +333,163 @@ static int tea_find_key(struct mi4header_t *mi4header, int fd)
     
     return key_found;
 }
+#if defined(SANSA_E200) || defined(SANSA_C200)
+/**********************************************************
+* read_line function borrowed from /apps/misc.c
+*  -- id10terror 
+**********************************************************/
+int read_line(int fd, char* buffer, int buffer_size)
+{
+    int count = 0;
+    int num_read = 0;
+	//trim_spaces(buffer);
+    errno = 0;
 
+    while (count < buffer_size)
+    {
+        unsigned char c;
+
+        if (1 != read(fd, &c, 1))
+            break;
+
+        num_read++;
+
+        if ( c == '\n' )
+            break;		
+
+        if ( c == '\r' )
+            continue;
+
+        buffer[count++] = c;
+    }
+
+    buffer[MIN(count, buffer_size - 1)] = 0;
+
+    return errno ? -1 : num_read;
+}
+
+/**********************************************************
+  Function to trim spaces out of char array  
+  Need to figure this out later. -- id10terror
+***********************************************************/
+/*
+char* trim_spaces(char* string){
+}
+*/
+
+/**********************************************************
+  Load Custom Bootloader configuration file -- id10terror 
+***********************************************************/
+
+void load_cbl_config(char* filename)
+{
+	int file = open(filename, O_RDONLY);
+	char buffer[128];
+if (file != -1){	
+	while(read_line(file,buffer,sizeof(buffer)) > 0 )
+	{
+		/* Checks for commented line */
+		if(strstr(buffer,"#") == 0){
+		
+			if(strcasestr(buffer,"cbl_fw_dir=") != 0)
+			{
+				int i;
+				int len = strlen(buffer);
+				for(i = 11; i < len; i++) {
+				cbl_fw_dir[i-11] = buffer[i];
+				}
+				/* used for debug */
+				//printf("dir:%s",buffer);
+				//printf("dir:%s",cbl_fw_dir);
+				
+			}
+		
+			if(strcasestr(buffer,"btn_select=") != 0)
+			{
+				int i;
+				int len = strlen(buffer);
+				for(i = 11; i < len; i++) {
+				btn_select[i-11] = buffer[i];
+				}
+				/* used for debug */
+				//printf("sel:%s",buffer);
+				//printf("sel:%s",btn_select);
+			}
+		
+			if(strcasestr(buffer,"btn_up=") != 0)
+			{
+				int i;
+				int len = strlen(buffer);
+				for(i = 7; i < len; i++) {
+				btn_up[i-7] = buffer[i];
+				} 
+				/* used for debug */
+				//printf("up:%s",buffer);
+				//printf("up:%s",btn_up);
+			}
+		
+			if(strcasestr(buffer,"btn_right=") != 0)
+			{
+				int i;
+				int len = strlen(buffer);
+				for(i = 10; i < len; i++) {
+				btn_right[i-10] = buffer[i];
+				}
+				/* used for debug */				
+				//printf("right:%s",buffer);
+				//printf("right:%s",btn_right);
+			}
+		
+			if(strcasestr(buffer,"btn_down=") != 0)
+			{
+				int i;
+				int len = strlen(buffer);
+				for(i = 9; i < len; i++) {
+				btn_down[i-9] = buffer[i];
+				}
+				/* used for debug */				
+				//printf("down:%s",buffer);
+				//printf("down:%s",btn_down);
+			}
+			
+			/* Ends infinite while loop. Need to find a better way to
+			   detect the end of the config file */
+			//else {break;}
+		
+		}
+	} /* End while loop */
+	close(file);
+	
+	/* If not defined in config file, set default values -- id10terror */
+	
+	if(strlen(cbl_fw_dir) == 0){
+		strcpy(cbl_fw_dir,"/.rockbox/");
+	}
+	if(strlen(btn_select) == 0){
+		strcpy(btn_select,"SELECT.mi4");
+	}
+	if(strlen(btn_up) == 0){
+		strcpy(btn_up,"UP.mi4");
+	}
+	if(strlen(btn_right) == 0){
+		strcpy(btn_right,"RIGHT.mi4");
+	}
+	if(strlen(btn_down) == 0){
+		strcpy(btn_down,"DOWN.mi4");
+	}
+}
+/* If no config file is found, set default values -- id10terror */
+else{
+		printf("No config file found");
+		printf("Using default config");
+		strcpy(cbl_fw_dir,"/.rockbox/");
+		strcpy(btn_select,"SELECT.mi4");
+		strcpy(btn_up,"UP.mi4");
+		strcpy(btn_right,"RIGHT.mi4");
+		strcpy(btn_down,"DOWN.mi4");
+}
+} /* end of load_cbl_config() */
+#endif
 
 /* Load mi4 format firmware image */
 int load_mi4(unsigned char* buf, char* firmware, unsigned int buffer_size)
@@ -659,16 +839,26 @@ if(btn & BOOTLOADER_BOOT_OF)
         
         error(0, 0, true);
     }
+	
+/* Only applicable if device is e200 or c200 -- id10terror */
+#if defined(SANSA_E200) || defined(SANSA_C200)
+
+if(btn){
+load_cbl_config(cbl_cfg_file);
+}
 
 /* If SELECT button is pressed -- id10terror */
-else if(btn & BOOTLOADER_BOOT_R0)
+if(btn & BOOTLOADER_BOOT_R0)
     {
-        /* Try to load ./rockbox/SELECT.mi4 file -- id10terror */
+	char cbl_fw_path[strlen(cbl_fw_dir) + strlen(btn_select) + 2];
+	strcpy(cbl_fw_path, cbl_fw_dir);
+	strcat(cbl_fw_path, btn_select);
+	/* Try to load FW for SELECT button -- id10terror */
         printf("Loading Custom Firmware...");
-        printf("Loading /.rockbox/SELECT.mi4");
-        rc=load_mi4(loadbuffer, "/.rockbox/SELECT.mi4", MAX_LOADSIZE);
+        printf("Loading %s", cbl_fw_path);
+        rc=load_mi4(loadbuffer, cbl_fw_path, MAX_LOADSIZE);
         if (rc < EOK) {
-            printf("Can't load /.rockbox/SELECT.mi4");
+            printf("Can't load %s", cbl_fw_path);
             printf(strerror(rc));
 			/* If no file is found, load default firmware -- id10terror */
 			printf("Loading Default Firmware...");
@@ -684,19 +874,22 @@ else if(btn & BOOTLOADER_BOOT_R0)
 
 /* If UP button is pressed -- id10terror */
 else if(btn & BOOTLOADER_BOOT_R1)
-    {
-        /* Try to load ./rockbox/UP.mi4 file -- id10terror */
+    {	
+	char cbl_fw_path[strlen(cbl_fw_dir) + strlen(btn_up) + 2];
+	strcpy(cbl_fw_path, cbl_fw_dir);
+	strcat(cbl_fw_path, btn_up);
+	/* Try to load FW for UP button -- id10terror */
         printf("Loading Custom Firmware...");
-        printf("Loading /.rockbox/UP.mi4");
-        rc=load_mi4(loadbuffer, "/.rockbox/UP.mi4", MAX_LOADSIZE);
+        printf("Loading %s", cbl_fw_path);
+        rc=load_mi4(loadbuffer, cbl_fw_path, MAX_LOADSIZE);
         if (rc < EOK) {
-            printf("Can't load /.rockbox/UP.mi4");
+            printf("Can't load %s", cbl_fw_path);
             printf(strerror(rc));
-			/* If no file is found, load default firmware -- id10terror */			
+			/* If no file is found, load default firmware -- id10terror */
 			printf("Loading Default Firmware...");
 			sleep(HZ*2);
 			rc = load_mi4(loadbuffer, BOOTFILE, MAX_LOADSIZE);
-			return (void*)loadbuffer;			
+			return (void*)loadbuffer;
         } else {
 			printf("*** FIRMWARE LOADED ***");
 			sleep(HZ*2);
@@ -705,19 +898,22 @@ else if(btn & BOOTLOADER_BOOT_R1)
 }
 /* If RIGHT button is pressed -- id10terror */
 else if(btn & BOOTLOADER_BOOT_R2)
-    {
-        /* Try to load ./rockbox/RIGHT.mi4 file -- id10terror */
+    {	
+	char cbl_fw_path[strlen(cbl_fw_dir) + strlen(btn_right) + 2];
+	strcpy(cbl_fw_path, cbl_fw_dir);
+	strcat(cbl_fw_path, btn_right);
+	/* Try to load FW for RIGHT button -- id10terror */
         printf("Loading Custom Firmware...");
-        printf("Loading /.rockbox/RIGHT.mi4");
-        rc=load_mi4(loadbuffer, "/.rockbox/RIGHT.mi4", MAX_LOADSIZE);
+        printf("Loading %s", cbl_fw_path);
+        rc=load_mi4(loadbuffer, cbl_fw_path, MAX_LOADSIZE);
         if (rc < EOK) {
-            printf("Can't load /.rockbox/RIGHT.mi4");
+            printf("Can't load %s", cbl_fw_path);
             printf(strerror(rc));
-			/* If no file is found, load default firmware -- id10terror */			
+			/* If no file is found, load default firmware -- id10terror */
 			printf("Loading Default Firmware...");
 			sleep(HZ*2);
 			rc = load_mi4(loadbuffer, BOOTFILE, MAX_LOADSIZE);
-			return (void*)loadbuffer;			
+			return (void*)loadbuffer;
         } else {
 			printf("*** FIRMWARE LOADED ***");
 			sleep(HZ*2);
@@ -726,25 +922,30 @@ else if(btn & BOOTLOADER_BOOT_R2)
 }
 /* If DOWN button is pressed -- id10terror */
 else if(btn & BOOTLOADER_BOOT_R3)
-    {
-        /* Try to load ./rockbox/DOWN.mi4 file -- id10terror */
+    {	
+	char cbl_fw_path[strlen(cbl_fw_dir) + strlen(btn_down) + 2];
+	strcpy(cbl_fw_path, cbl_fw_dir);
+	strcat(cbl_fw_path, btn_down);
+	/* Try to load FW for SELECT button -- id10terror */
         printf("Loading Custom Firmware...");
-        printf("Loading /.rockbox/DOWN.mi4");
-        rc=load_mi4(loadbuffer, "/.rockbox/DOWN.mi4", MAX_LOADSIZE);
+        printf("Loading %s", cbl_fw_path);
+        rc=load_mi4(loadbuffer, cbl_fw_path, MAX_LOADSIZE);
         if (rc < EOK) {
-            printf("Can't load /.rockbox/DOWN.mi4");
+            printf("Can't load %s", cbl_fw_path);
             printf(strerror(rc));
-			/* If no file is found, load default firmware -- id10terror */			
+			/* If no file is found, load default firmware -- id10terror */
 			printf("Loading Default Firmware...");
 			sleep(HZ*2);
 			rc = load_mi4(loadbuffer, BOOTFILE, MAX_LOADSIZE);
-			return (void*)loadbuffer;			
+			return (void*)loadbuffer;
         } else {
 			printf("*** FIRMWARE LOADED ***");
 			sleep(HZ*2);
             return (void*)loadbuffer;
         }
 }
+#endif
+
 else
 	return (void*)loadbuffer;
 }
