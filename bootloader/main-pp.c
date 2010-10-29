@@ -5,7 +5,7 @@
  *   Jukebox    |    |   (  <_> )  \___|    < | \_\ (  <_> > <  <
  *   Firmware   |____|_  /\____/ \___  >__|_ \|___  /\____/__/\_ \
  *                     \/            \/     \/    \/            \/
- * $Id: main-pp.c 27075 2010-06-23 05:08:36Z funman $
+ * $Id$
  *
  * Copyright (C) 2006 by Barry Wardell
  *
@@ -63,6 +63,11 @@ extern int show_logo(void);
 
 #elif CONFIG_KEYPAD == SANSA_E200_PAD
 #define BOOTLOADER_BOOT_OF      BUTTON_LEFT
+/* Define other buttons used to load Firmware -- id10terror */
+#define BOOTLOADER_BOOT_R0      BUTTON_SELECT
+#define BOOTLOADER_BOOT_R1      BUTTON_UP
+#define BOOTLOADER_BOOT_R2      BUTTON_RIGHT
+#define BOOTLOADER_BOOT_R3      BUTTON_DOWN
 
 #elif CONFIG_KEYPAD == SANSA_C200_PAD
 #define BOOTLOADER_BOOT_OF      BUTTON_LEFT
@@ -522,9 +527,11 @@ void* main(void)
 
     lcd_setfont(FONT_SYSFIXED);
 
-    printf("Rockbox boot loader");
+    printf("Rockbox-Custom Boot Loader");
+    printf("by id10terror");
     printf("Version: " RBVERSION);
     printf(MODEL_NAME);
+
 
     i=storage_init();
 #if !(CONFIG_STORAGE & STORAGE_SD)
@@ -561,7 +568,8 @@ void* main(void)
     }
 
     /* Try loading Rockbox, if that fails, fall back to the OF */
-    if((btn & BOOTLOADER_BOOT_OF) == 0)
+    /* Listen for other buttons as well -- id10terror */
+    if(((btn & BOOTLOADER_BOOT_OF) || (btn & BOOTLOADER_BOOT_R0) || (btn & BOOTLOADER_BOOT_R1) || (btn & BOOTLOADER_BOOT_R2) || (btn & BOOTLOADER_BOOT_R3)) == 0)
     {
         printf("Loading Rockbox...");
         rc = load_mi4(loadbuffer, BOOTFILE, MAX_LOADSIZE);
@@ -579,7 +587,7 @@ void* main(void)
             return (void*)loadbuffer;
     }
 
-    if(btn & BOOTLOADER_BOOT_OF)
+if(btn & BOOTLOADER_BOOT_OF)
     {
         /* Load original mi4 firmware in to a memory buffer called loadbuffer.
            The rest of the loading is done in crt0.S.
@@ -607,6 +615,7 @@ void* main(void)
             printf("No hidden partition found.");
         }
 #endif
+
 
 #if defined(PHILIPS_HDD1630) || defined(PHILIPS_HDD6330)
         printf("Trying /System/OF.ebn");
@@ -645,5 +654,94 @@ void* main(void)
         
         error(0, 0, true);
     }
-    return (void*)loadbuffer;
+
+/* If SELECT button is pressed -- id10terror */
+else if(btn & BOOTLOADER_BOOT_R0)
+    {
+        /* Try to load ./rockbox/SELECT.mi4 file -- id10terror */
+        printf("Loading Custom Firmware...");
+        printf("Loading /.rockbox/SELECT.mi4");
+        rc=load_mi4(loadbuffer, "/.rockbox/SELECT.mi4", MAX_LOADSIZE);
+        if (rc < EOK) {
+            printf("Can't load /.rockbox/SELECT.mi4");
+            printf(strerror(rc));
+			/* If no file is found, load default firmware -- id10terror */
+			printf("Loading Default Firmware...");
+			sleep(HZ*2);
+			rc = load_mi4(loadbuffer, BOOTFILE, MAX_LOADSIZE);
+			return (void*)loadbuffer;
+        } else {
+			printf("*** FIRMWARE LOADED ***");
+			sleep(HZ*2);
+            return (void*)loadbuffer;
+        }
 }
+
+/* If UP button is pressed -- id10terror */
+else if(btn & BOOTLOADER_BOOT_R1)
+    {
+        /* Try to load ./rockbox/UP.mi4 file -- id10terror */
+        printf("Loading Custom Firmware...");
+        printf("Loading /.rockbox/UP.mi4");
+        rc=load_mi4(loadbuffer, "/.rockbox/UP.mi4", MAX_LOADSIZE);
+        if (rc < EOK) {
+            printf("Can't load /.rockbox/UP.mi4");
+            printf(strerror(rc));
+			/* If no file is found, load default firmware -- id10terror */			
+			printf("Loading Default Firmware...");
+			sleep(HZ*2);
+			rc = load_mi4(loadbuffer, BOOTFILE, MAX_LOADSIZE);
+			return (void*)loadbuffer;			
+        } else {
+			printf("*** FIRMWARE LOADED ***");
+			sleep(HZ*2);
+            return (void*)loadbuffer;
+        }
+}
+/* If RIGHT button is pressed -- id10terror */
+else if(btn & BOOTLOADER_BOOT_R2)
+    {
+        /* Try to load ./rockbox/RIGHT.mi4 file -- id10terror */
+        printf("Loading Custom Firmware...");
+        printf("Loading /.rockbox/RIGHT.mi4");
+        rc=load_mi4(loadbuffer, "/.rockbox/RIGHT.mi4", MAX_LOADSIZE);
+        if (rc < EOK) {
+            printf("Can't load /.rockbox/RIGHT.mi4");
+            printf(strerror(rc));
+			/* If no file is found, load default firmware -- id10terror */			
+			printf("Loading Default Firmware...");
+			sleep(HZ*2);
+			rc = load_mi4(loadbuffer, BOOTFILE, MAX_LOADSIZE);
+			return (void*)loadbuffer;			
+        } else {
+			printf("*** FIRMWARE LOADED ***");
+			sleep(HZ*2);
+            return (void*)loadbuffer;
+        }
+}
+/* If DOWN button is pressed -- id10terror */
+else if(btn & BOOTLOADER_BOOT_R3)
+    {
+        /* Try to load ./rockbox/DOWN.mi4 file -- id10terror */
+        printf("Loading Custom Firmware...");
+        printf("Loading /.rockbox/DOWN.mi4");
+        rc=load_mi4(loadbuffer, "/.rockbox/DOWN.mi4", MAX_LOADSIZE);
+        if (rc < EOK) {
+            printf("Can't load /.rockbox/DOWN.mi4");
+            printf(strerror(rc));
+			/* If no file is found, load default firmware -- id10terror */			
+			printf("Loading Default Firmware...");
+			sleep(HZ*2);
+			rc = load_mi4(loadbuffer, BOOTFILE, MAX_LOADSIZE);
+			return (void*)loadbuffer;			
+        } else {
+			printf("*** FIRMWARE LOADED ***");
+			sleep(HZ*2);
+            return (void*)loadbuffer;
+        }
+}
+else
+	return (void*)loadbuffer;
+}
+
+
