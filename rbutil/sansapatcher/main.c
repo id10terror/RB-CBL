@@ -140,7 +140,7 @@ int main(int argc, char* argv[])
     int res = 0;
 
     fprintf(stderr,"sansapatcher v" VERSION " - (C) Dave Chapman 2006-2007\n");
-	fprintf(stderr,"e200v1\\e200r\\c200v1 Custom Firmware Bootloader v0.3 by id10terror (http://id10terror.net)\n");	
+	fprintf(stderr,"e200v1\\c200v1 Custom Firmware Bootloader v0.3 by id10terror (http://id10terror.net)\n");	
     fprintf(stderr,"This is free software; see the source for copying conditions.  There is NO\n");
     fprintf(stderr,"warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.\n\n");
 
