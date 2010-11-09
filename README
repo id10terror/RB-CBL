@@ -1,5 +1,6 @@
 ####################################################
-# ROCKBOX CUSTOM BOOTLOADER by id10terror.net
+# ROCKBOX CUSTOM BOOTLOADER
+# by id10terror (www.id10terror.net)
 # Sansa e200v1/e200r/c200v1
 # Latest Release: v0.3 (11-09-10)
 ####################################################
@@ -8,12 +9,16 @@
  INSTRUCTIONS for e200v1/c200v1:
 ====================================================
 
-1. Download the Rockbox Utility
+1. Download the Rockbox Utility:
+   http://download.rockbox.org/rbutil/win32/RockboxUtility-v1.2.8.zip
 2. Using the Rockbox Utility, perform a Complete Installation.
 3. Download the compiled CBL zip file and extract it somewhere on your computer.
 4. Run the .exe file, and choose the option ‘i’ to install the modified bootloader.
-5. Safely remove your device and reboot it while pressing the desired button. 
-   Press and hold button until text appears on the screen.
+5. Safely remove your device and reboot it.
+6. Reconnect your Sansa and modify cbl.cfg to your liking. 
+7. Reboot Sansa while pressing the desired button. Press and hold button until text 
+   appears on the screen.
+
 
 ====================================================
  INSTRUCTIONS for e200r:
@@ -40,7 +45,7 @@ STEP 2:
 5. Open up the folder where you extracted the files.
 6. Copy OF.mi4 from the extracted e200r directory to the /System directory on your Sansa.
    NOTE: the /System directory is hidden, so make sure your folder settings allow viewing
-         hidden files and folder.
+         hidden files and folders.
 7. Copy pp5022.mi4 from the extracted e200r directory to the root of your device.
 8. Copy cbl.cfg from the extracted e200r directory to the root of your Sansa.
 9. Safely remove your device and press and continue holding the left button while you 
