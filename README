@@ -48,10 +48,10 @@ STEP 2:
 7. Copy OF.mi4 (the one you just renamed) to the /System directory on your Sansa.
    NOTE: the /System directory is hidden, so make sure your folder settings allow viewing
          hidden files and folders.
-8. Copy pp5022.mi4 from the extracted e200r directory to the root of your device.
-9. Copy cbl.cfg from the extracted e200r directory to the root of your Sansa.
+8. Copy pp5022.mi4 from the extracted CBL zip e200r directory to the root of your device.
+9. Copy cbl.cfg from the extracted CBL zip to the root of your Sansa.
 10. Safely remove your device and press and continue holding the left button while you 
-   disconnect the USB cable so that the device reboots into the OF.
+    disconnect the USB cable so that the device reboots into the OF.
 11. Once the device reboots into the OF, you can release the left button. The OF will refresh
     the database, display "Firmware upgrade in progress" and reboot your device. 
 12. Modify cbl.cfg to your liking.
