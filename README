@@ -1,0 +1,121 @@
+####################################################
+# ROCKBOX CUSTOM BOOTLOADER by id10terror.net
+# Sansa e200v1/e200r/c200v1
+# Latest Release: v0.3 (11-09-10)
+####################################################
+
+====================================================
+ INSTRUCTIONS for e200v1/c200v1:
+====================================================
+
+1. Download the Rockbox Utility
+2. Using the Rockbox Utility, perform a Complete Installation.
+3. Download the compiled CBL zip file and extract it somewhere on your computer.
+4. Run the .exe file, and choose the option ‘i’ to install the modified bootloader.
+5. Safely remove your device and reboot it while pressing the desired button. 
+   Press and hold button until text appears on the screen.
+
+====================================================
+ INSTRUCTIONS for e200r:
+====================================================
+
+** THIS IS ONLY FOR THE e200r(RHAPSODY) VERSION **
+** You will first need to patch your bootloader. **
+** If you have already patched your bootloader, then skip to STEP 2 **
+
+STEP 1:
+
+Follow the instructions posted here to patch your e200r bootloader:
+http://www.rockbox.org/wiki/SansaE200RInstallation
+
+STEP 2:
+
+** ONLY After Patching your e200r bootloader proceed with the next steps **
+
+1. Download a Sansa e200 build (v1 only) of Rockbox and unzip it to the root of your device.
+   Daily build can be downloaded here: http://build.rockbox.org/data/rockbox-sansae200.zip 
+2. Download the compiled CBL zip file and extract it somewhere on your computer.
+3. Boot up your e200r into the OF by holding the left button while powering up.
+4. Connect the USB cable.
+5. Open up the folder where you extracted the files.
+6. Copy OF.mi4 from the extracted e200r directory to the /System directory on your Sansa.
+   NOTE: the /System directory is hidden, so make sure your folder settings allow viewing
+         hidden files and folder.
+7. Copy pp5022.mi4 from the extracted e200r directory to the root of your device.
+8. Copy cbl.cfg from the extracted e200r directory to the root of your Sansa.
+9. Safely remove your device and press and continue holding the left button while you 
+   disconnect the USB cable so that the device reboots into the OF.
+10. Once the device reboots into the OF, you can release the left button. The OF will refresh
+    the database, display "Firmware upgrade in progress" and reboot your device. 
+11. Modify cbl.cfg to your liking.
+12. Restart Sansa while pressing the desired button. Press and hold button until text appears 
+    on the screen.
+
+----------------------------------------------------
+ ** TO UPDATE the e200r Custom Bootloader:
+----------------------------------------------------
+1. Boot up your e200r into the OF by holding the left button while powering up.
+2. Copy pp5022.mi4 from the extracted e200r directory to the root of your device.
+3. Safely remove your device and press and continue holding the left button while you 
+   disconnect the USB cable so that the device reboots into the OF.
+4. Once the device reboots into the OF, you can release the left button. The OF will refresh
+   the database, display "Firmware upgrade in progress" and reboot your device. 
+
+
+====================================================
+ Notes:
+====================================================
+
+* The LEFT button is reserved for booting into the Original Sansa firmware, same as always.
+* rockbox.mi4 (used as the default firmware) — If you are already running a custom FW, I'd
+  suggest renaming the .mi4 file something else and recording it in your cbl.cfg file.
+  Then reinstall RB so that rockbox.mi4 is the original RB firmware.
+* If you try to boot up a non-existent firmware image, the bootloader will let you know 
+  it was not loaded and proceed to load the default firmware.
+* If the config file (cbl.cfg) is not found it will use the default settings.
+  Defaults are: UP.mi4, DOWN.mi4, RIGHT.mi4, SELECT.mi4
+* Use "#" to comment out a line. If the variable isn't set, the default will be used
+  for that button or firmware dir.
+* If the firmware is found and loaded correctly, you should see a confirmation 
+  “*** Firmware Loaded ***” message.
+
+
+====================================================
+ SAMPLE cbl.cfg settings:
+====================================================
+
+cbl_fw_dir=/.rockbox/
+btn_select=hermes4b.mi4
+btn_up=PL3.mi4
+btn_right=testFW.mi4
+btn_down=hermesv3.mi4
+
+----------------------------------------------------
+
+====================================================
+ SAMPLE cbl.cfg with different FW dirs:
+====================================================
+
+cbl_fw_dir=/
+btn_select=PS3/hermes4b.mi4
+btn_up=PS3/PL3.mi4
+btn_right=TEST/testFW.mi4
+btn_down=.rockbox/hermesv3.mi4
+
+----------------------------------------------------
+
+
+====================================================
+ Change Log:
+====================================================
+
+v0.3
+  + Support for Sansa e200r
+  + User-configurable settings via cbl.cfg file
+
+v0.2
+  + Support for Sansa c200v1
+
+v0.1
+  + Support for Sansa e200v1
+
