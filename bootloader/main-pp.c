@@ -58,7 +58,7 @@
 /***********************************************
   Define dir and file variables -- id10terror
 ************************************************/
-char cbl_cfg_file[]="/.rockbox/cbl.cfg";
+char cbl_cfg_file[]="/cbl.cfg";
 char cbl_fw_dir[128];
 char btn_select[48];
 char btn_up[48];
@@ -451,11 +451,6 @@ if (file != -1){
 				//printf("down:%s",buffer);
 				//printf("down:%s",btn_down);
 			}
-			
-			/* Ends infinite while loop. Need to find a better way to
-			   detect the end of the config file */
-			//else {break;}
-		
 		}
 	} /* End while loop */
 	close(file);
