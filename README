@@ -40,20 +40,22 @@ STEP 2:
 1. Download a Sansa e200 build (v1 only) of Rockbox and unzip it to the root of your device.
    Daily build can be downloaded here: http://build.rockbox.org/data/rockbox-sansae200.zip 
 2. Download the compiled CBL zip file and extract it somewhere on your computer.
-3. Boot up your e200r into the OF by holding the left button while powering up.
-4. Connect the USB cable.
-5. Open up the folder where you extracted the files.
-6. Copy OF.mi4 from the extracted e200r directory to the /System directory on your Sansa.
+3. Download the e200r original firmware and rename the pp5022.mi4 file to OF.mi4.
+   Link: http://mp3support.sandisk.com/firmware/rhapsody-1.0.2.165.zip 
+4. Boot up your e200r into the OF by holding the left button while powering up.
+5. Connect the USB cable.
+6. Open up the folder where you extracted the files.
+7. Copy OF.mi4 (the one you just renamed) to the /System directory on your Sansa.
    NOTE: the /System directory is hidden, so make sure your folder settings allow viewing
          hidden files and folders.
-7. Copy pp5022.mi4 from the extracted e200r directory to the root of your device.
-8. Copy cbl.cfg from the extracted e200r directory to the root of your Sansa.
-9. Safely remove your device and press and continue holding the left button while you 
+8. Copy pp5022.mi4 from the extracted e200r directory to the root of your device.
+9. Copy cbl.cfg from the extracted e200r directory to the root of your Sansa.
+10. Safely remove your device and press and continue holding the left button while you 
    disconnect the USB cable so that the device reboots into the OF.
-10. Once the device reboots into the OF, you can release the left button. The OF will refresh
+11. Once the device reboots into the OF, you can release the left button. The OF will refresh
     the database, display "Firmware upgrade in progress" and reboot your device. 
-11. Modify cbl.cfg to your liking.
-12. Restart Sansa while pressing the desired button. Press and hold button until text appears 
+12. Modify cbl.cfg to your liking.
+13. Restart Sansa while pressing the desired button. Press and hold button until text appears 
     on the screen.
 
 ----------------------------------------------------
